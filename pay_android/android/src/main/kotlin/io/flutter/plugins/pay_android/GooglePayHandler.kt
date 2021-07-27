@@ -197,10 +197,20 @@ class GooglePayHandler(private val activity: Activity) :
                     true
                 }
 
-                else -> false
+                else -> {
+                    AutoResolveHelper.getStatusFromIntent(data)?.let { status ->
+                        handleError(status.statusCode)
+                    }
+                    false
+                }
             }
         }
-        else -> false
+        else -> {
+            AutoResolveHelper.getStatusFromIntent(data)?.let { status ->
+                handleError(status.statusCode)
+            }
+            false
+        }
     }
 
     /**
