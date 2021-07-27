@@ -184,6 +184,9 @@ class GooglePayHandler(private val activity: Activity) :
 
                 Activity.RESULT_CANCELED -> {
                     // The user cancelled the payment attempt
+                    data?.let { intent ->
+                        PaymentData.getFromIntent(intent).let(::handlePaymentSuccess)
+                    }
                     true
                 }
 
