@@ -182,33 +182,29 @@ class GooglePayHandler(private val activity: Activity) :
                     true
                 }
 
-                Activity.RESULT_CANCELED -> {
-                    // The user cancelled the payment attempt
-                    AutoResolveHelper.getStatusFromIntent(data)?.let { status ->
-                        handleError(status.statusCode)
-                    }
-                    true
-                }
-
-                AutoResolveHelper.RESULT_ERROR -> {
-                    AutoResolveHelper.getStatusFromIntent(data)?.let { status ->
-                        handleError(status.statusCode)
-                    }
-                    true
-                }
+//                Activity.RESULT_CANCELED, AutoResolveHelper.RESULT_ERROR -> {
+//                    // The user cancelled the payment attempt
+//                    AutoResolveHelper.getStatusFromIntent(data)?.let { status ->
+//                        handleError(status.statusCode)
+//                    }
+//                    true
+//                }
+//
+//                AutoResolveHelper.RESULT_ERROR -> {
+//                    AutoResolveHelper.getStatusFromIntent(data)?.let { status ->
+//                        handleError(status.statusCode)
+//                    }
+//                    true
+//                }
 
                 else -> {
-                    AutoResolveHelper.getStatusFromIntent(data)?.let { status ->
-                        handleError(status.statusCode)
-                    }
+                    handleError(400)
                     true
                 }
             }
         }
         else -> {
-            AutoResolveHelper.getStatusFromIntent(data)?.let { status ->
-                handleError(status.statusCode)
-            }
+            handleError(400)
             true
         }
     }
