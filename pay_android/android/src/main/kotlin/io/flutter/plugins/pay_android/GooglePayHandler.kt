@@ -201,7 +201,7 @@ class GooglePayHandler(private val activity: Activity) :
                     AutoResolveHelper.getStatusFromIntent(data)?.let { status ->
                         handleError(status.statusCode)
                     }
-                    false
+                    true
                 }
             }
         }
@@ -209,7 +209,7 @@ class GooglePayHandler(private val activity: Activity) :
             AutoResolveHelper.getStatusFromIntent(data)?.let { status ->
                 handleError(status.statusCode)
             }
-            false
+            true
         }
     }
 
