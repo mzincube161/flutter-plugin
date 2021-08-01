@@ -185,12 +185,10 @@ extension PaymentHandler: PKPaymentAuthorizationControllerDelegate {
   
   func paymentAuthorizationControllerDidFinish(_ controller: PKPaymentAuthorizationController) {
     controller.dismiss {
-      print("Controller dismissed check status \(self.paymentStatus)") 
       // DispatchQueue.main.async {
         if self.paymentStatus != .success {
           self.paymentResult(FlutterError(code: "paymentFailed", message: "Failed to complete the payment", details: nil))
-        }
-        print("Controller dismissed finished ") 
+        } 
       // }
     }
   }
