@@ -240,6 +240,9 @@ class GooglePayHandler(private val activity: Activity) :
      * @see [
      * Wallet constants library](https://developers.google.com/android/reference/com/google/android/gms/wallet/WalletConstants.constant-summary)
      */
-    private fun handleError(statusCode: Int) =
+    private fun handleError(statusCode: Int) {
+        if (loadPaymentDataResult != null) {
             loadPaymentDataResult!!.error(statusCode.toString(), "", null)
+        }
+    }
 }
