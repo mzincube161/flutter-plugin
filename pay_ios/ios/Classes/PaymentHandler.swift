@@ -145,16 +145,20 @@ class PaymentHandler: NSObject {
     
     // Include the shipping fields required.
     if let requiredShippingFields = paymentConfiguration["requiredShippingContactFields"] as? Array<String> {
-      paymentRequest.requiredShippingContactFields = Set(requiredShippingFields.compactMap { shippingField in
-        PKContactField.fromString(shippingField)
-      })
+      if #available(iOS 11.0, *) {
+        paymentRequest.requiredShippingContactFields = Set(requiredShippingFields.compactMap { shippingField in
+          PKContactField.fromString(shippingField)
+        })
+      }
     }
     
     // Include the billing fields required.
     if let requiredBillingFields = paymentConfiguration["requiredBillingContactFields"] as? Array<String> {
-      paymentRequest.requiredBillingContactFields = Set(requiredBillingFields.compactMap { billingField in
-        PKContactField.fromString(billingField)
-      })
+      if #available(iOS 11.0, *) {
+        paymentRequest.requiredBillingContactFields = Set(requiredBillingFields.compactMap { billingField in
+          PKContactField.fromString(billingField)
+        })
+      }
     }
     
     // Add supported networks if available.
@@ -168,6 +172,23 @@ class PaymentHandler: NSObject {
 
 /// Extension that implements the completion methods in the delegate to respond to user selection.
 extension PaymentHandler: PKPaymentAuthorizationControllerDelegate {
+
+  func paymentAuthorizationController(_: PKPaymentAuthorizationController, didAuthorizePayment payment: PKPayment, handler completion: @escaping (PKPaymentAuthorizationStatus) -> Void) {
+    
+    // Collect payment result or error and return if no payment was selected
+    guard let paymentResultData = try? JSONSerialization.data(withJSONObject: payment.toDictionary()) else {
+      self.paymentResult(FlutterError(code: "paymentResultDeserializationFailed", message: nil, details: nil))
+      return
+    }
+    
+    // Return the result back to the channel
+    self.paymentResult(String(decoding: paymentResultData, as: UTF8.self))
+    
+    paymentStatus = .success
+    completion(PKPaymentAuthorizationStatus(status: paymentStatus, errors: nil))
+  }
+
+  @available(iOS 11.0, *)
   func paymentAuthorizationController(_: PKPaymentAuthorizationController, didAuthorizePayment payment: PKPayment, handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
     
     // Collect payment result or error and return if no payment was selected
@@ -256,41 +277,77 @@ extension PKPaymentNetwork {
     case "amex":
       return .amex
     case "cartesBancaires":
-      return .cartesBancaires
+      if #available(iOS 11.2, *) {
+        return .cartesBancaires
+      } else {
+        return nil
+      }
     case "chinaUnionPay":
       return .chinaUnionPay
     case "discover":
       return .discover
     case "eftpos":
-      return .eftpos
+      if #available(iOS 12.0, *) {
+        return .eftpos
+      } else {
+        return nil
+      }
     case "electron":
-      return .electron
+      if #available(iOS 12.0, *) {
+        return .electron
+      } else {
+        return nil
+      }
     case "elo":
       guard #available(iOS 12.1.1, *) else { return nil }
       return .elo
     case "idCredit":
-      return .idCredit
+      if #available(iOS 10.3, *) {
+        return .idCredit
+      } else {
+        return nil
+      }
     case "interac":
       return .interac
     case "JCB":
-      return .JCB
+      if #available(iOS 10.1, *) {
+        return .JCB
+      } else {
+        return nil
+      }
     case "mada":
       guard #available(iOS 12.1.1, *) else { return nil }
       return .mada
     case "maestro":
-      return .maestro
+      if #available(iOS 12.0, *) {
+        return .maestro
+      } else {
+        return nil
+      }
     case "masterCard":
       return .masterCard
     case "privateLabel":
       return .privateLabel
     case "quicPay":
-      return .quicPay
+      if #available(iOS 10.3, *) {
+        return .quicPay
+      } else {
+        return nil
+      }
     case "suica":
-      return .suica
+      if #available(iOS 10.1, *) {
+        return .suica
+      } else {
+        return nil
+      }
     case "visa":
       return .visa
     case "vPay":
-      return .vPay
+      if #available(iOS 12.0, *) {
+        return .vPay
+      } else {
+        return nil
+      }
     case "barcode":
       guard #available(iOS 14.0, *) else { return nil }
       return .barcode
@@ -343,15 +400,35 @@ extension PKContactField {
   public static func fromString(_ contactFieldItem: String) -> PKContactField? {
     switch contactFieldItem {
     case "emailAddress":
-      return .emailAddress
+      if #available(iOS 11.0, *) {
+        return .emailAddress
+      } else {
+        return nil
+      }
     case "name":
-      return .name
+      if #available(iOS 11.0, *) {
+        return .name
+      } else {
+        return nil
+      }
     case "phoneNumber":
-      return .phoneNumber
+      if #available(iOS 11.0, *) {
+        return .phoneNumber
+      } else {
+        return nil
+      }
     case "phoneticName":
-      return .phoneticName
+      if #available(iOS 11.0, *) {
+        return .phoneticName
+      } else {
+        return nil
+      }
     case "postalAddress":
-      return .postalAddress
+      if #available(iOS 11.0, *) {
+        return .postalAddress
+      } else {
+        return nil
+      }
     default:
       return nil
     }

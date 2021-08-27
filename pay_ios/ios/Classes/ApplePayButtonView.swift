@@ -171,13 +171,29 @@ extension PKPaymentButtonType {
     case "inStore":
       return .inStore
     case "donate":
-      return .donate
+      if #available(iOS 10.2, *) {
+        return .donate
+      } else {
+        return .plain
+      }
     case "checkout":
-      return .checkout
+      if #available(iOS 12.0, *) {
+        return .checkout
+      } else {
+        return .plain
+      }
     case "book":
-      return .book
+      if #available(iOS 12.0, *) {
+        return .book
+      } else {
+        return .plain
+      }
     case "subscribe":
-      return .subscribe
+      if #available(iOS 12.0, *) {
+        return .subscribe
+      } else {
+        return .plain
+      }
     default:
       guard #available(iOS 14.0, *) else { return .plain }
       switch buttonType {
