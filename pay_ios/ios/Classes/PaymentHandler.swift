@@ -172,23 +172,6 @@ class PaymentHandler: NSObject {
 
 /// Extension that implements the completion methods in the delegate to respond to user selection.
 extension PaymentHandler: PKPaymentAuthorizationControllerDelegate {
-
-  func paymentAuthorizationController(_: PKPaymentAuthorizationController, didAuthorizePayment payment: PKPayment, handler completion: @escaping (PKPaymentAuthorizationStatus) -> Void) {
-    
-    // Collect payment result or error and return if no payment was selected
-    guard let paymentResultData = try? JSONSerialization.data(withJSONObject: payment.toDictionary()) else {
-      self.paymentResult(FlutterError(code: "paymentResultDeserializationFailed", message: nil, details: nil))
-      return
-    }
-    
-    // Return the result back to the channel
-    self.paymentResult(String(decoding: paymentResultData, as: UTF8.self))
-    
-    paymentStatus = .success
-    completion(PKPaymentAuthorizationStatus(status: paymentStatus, errors: nil))
-  }
-
-  @available(iOS 11.0, *)
   func paymentAuthorizationController(_: PKPaymentAuthorizationController, didAuthorizePayment payment: PKPayment, handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
     
     // Collect payment result or error and return if no payment was selected
